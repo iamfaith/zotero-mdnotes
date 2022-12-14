@@ -33,6 +33,55 @@ function getConverter(){
     emDelimiter: Zotero.Prefs.get('extensions.mdnotes.html2md.default.em', true)
   })
 
+  converter.addRule('img', {
+      filter: 'img',
+      replacement: function(content, node) {
+          if (node.hasAttribute('data-annotation'))
+          {          
+            try {
+                let annotation = decodeURIComponent(node.getAttribute('data-annotation'));
+                let data = JSON.parse(annotation);
+                let attachment_uri = data["attachmentURI"].toString();
+                let itemKey = attachment_uri.substr(attachment_uri.lastIndexOf("/") + 1);
+                let url = `zotero://open-pdf/library/items/${itemKey}?annotation=${data["annotationKey"]}`;
+                content = `[IMG annotation show in PDF](${url})`;  
+            } catch(e)
+            {
+              alert(e)
+            }
+          }
+          return content;
+      } 
+  });
+
+  converter.addRule('span', {
+      filter: function (node) {
+          // Only works with span.highlight elements
+          return (
+            node.nodeName === 'SPAN' &&
+            node.getAttribute('class') === 'highlight'
+          );
+      },
+      replacement: function (content, node) {
+          // Access to the span.highlight element (.citation sibling)
+          // let sibling = node.previousSibling;
+          let newContent = content;      // By default
+          try {
+            let annotation = decodeURIComponent(node.getAttribute('data-annotation'));
+            let data = JSON.parse(annotation);
+            let attachment_uri = data["attachmentURI"].toString();
+            let itemKey = attachment_uri.substr(attachment_uri.lastIndexOf("/") + 1);
+            let url = `zotero://open-pdf/library/items/${itemKey}?annotation=${data["annotationKey"]}`;
+            newContent = `[${content}][show in PDF](${url})`;  
+          } catch(e)
+          {
+            alert(e)
+          }
+          return newContent;        
+      }
+    });  
+
+
   converter.addRule('p', {
     filter: 'p',
     replacement: function (content) {
