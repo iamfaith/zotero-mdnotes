@@ -72,7 +72,7 @@ function getConverter(){
             let attachment_uri = data["attachmentURI"].toString();
             let itemKey = attachment_uri.substr(attachment_uri.lastIndexOf("/") + 1);
             let url = `zotero://open-pdf/library/items/${itemKey}?annotation=${data["annotationKey"]}`;
-            newContent = `[${content}][show in PDF](${url})`;  
+            newContent = `${content}[show in PDF](${url})`;  
           } catch(e)
           {
             alert(e)
