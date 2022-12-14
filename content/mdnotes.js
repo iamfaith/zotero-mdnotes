@@ -334,7 +334,10 @@ function formatNoteTitle(titleString) {
 }
 
 function noteToMarkdown(item) {
+  // let str = JSON.stringify(item);
   let noteContent = item.getNote();
+  // debug
+  // alert(noteContent)
   var noteMD = {};
   // Use the turndown provider to turn the HTML into Markdown
   noteMD.noteContent = Zotero.MarkdownUtils.html2md(noteContent);
